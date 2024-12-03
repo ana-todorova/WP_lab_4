@@ -1,0 +1,15 @@
+version: "3"
+services:
+  vezbi-db:
+    image: "postgres"
+    container_name: "events_container"
+    environment:
+      - POSTGRES_USER=events_user
+      - POSTGRES_PASSWORD=events123
+      - POSTGRES_DB=events
+    ports:
+      - "5432:5432"
+    volumes:
+      - ./postgres_data:/var/lib/postgresql/data
+
+
