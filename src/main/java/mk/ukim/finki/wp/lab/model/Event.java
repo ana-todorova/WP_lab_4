@@ -17,6 +17,8 @@ public class Event {
     private Category category;
     @ManyToOne
     private Location location;
+    @ManyToOne
+    private User user;
 
     public Event(String name, String description, Double popularityScore, Category category, Location location) {
         this.name = name;

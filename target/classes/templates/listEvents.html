@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html lang="en" xmlns="http://www.w3.org/1999/xhtml"
-      xmlns:th="http://www.thymeleaf.org">
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 <head>
     <meta charset="UTF-8">
     <title>Event Booking page - Welcome and choose an Event</title>
@@ -47,6 +48,17 @@
                     <ul class="navbar-nav m-auto">
                         <li class="nav-item m-auto">
                             <a class="nav-link active" href="/events">Events</a>
+                        </li>
+
+                        <th:block sec:athorize="isAuthenticated()">
+                            <!--<li class="nav-item m-auto">
+                                <span th:text="'Logged in as: ' + ${#authentication.principal.username}"></span>
+                            </li>-->
+                            <li class="nav-item m-auto">
+                                <a class="nav-link active" href="/logout">Logout</a>
+                            </li>
+                        </th:block>
+
                     </ul>
 
                 </div>
@@ -97,18 +109,28 @@
                 <strong class="indent">Location:</strong> <span th:text="${event.getLocation().getName()}"></span>
             </label>
 
-            <div class="event-actions">
+            <!--<div class="event-actions">
                 <a th:href="@{/events/edit-form/{id}(id=${event.getId()})}" class="btn btn-warning btn-sm">
                     <i class="fa fa-edit"></i> Edit
                 </a>
                 <a th:href="@{/events/delete/{id}(id=${event.getId()})}" class="btn btn-danger btn-sm">
                     <i class="fa fa-trash"></i> Delete
                 </a>
+            </div>-->
+            <div class="event-actions">
+                <th:block sec:authorize="hasRole('ROLE_ADMIN')">
+                    <a th:href="@{/events/edit-form/{id}(id=${event.getId()})}" class="btn btn-warning btn-sm">
+                        <i class="fa fa-edit"></i> Edit
+                    </a>
+                    <a th:href="@{/events/delete/{id}(id=${event.getId()})}" class="btn btn-danger btn-sm">
+                        <i class="fa fa-trash"></i> Delete
+                    </a>
+                </th:block>
             </div>
         </div>
 
         <br/><br/>
-        <div class="col mb-3">
+        <!--<div class="col mb-3">
             <div class="row">
                 <div class="col-sm-12 col-md-12">
                     <a href="/events/add-form" class="btn btn-block btn-dark add-product-btn">
@@ -116,7 +138,18 @@
                     </a>
                 </div>
             </div>
-        </div>
+        </div>-->
+        <th:block sec:authorize="hasRole('ROLE_ADMIN')">
+            <div class="col mb-3">
+                <div class="row">
+                    <div class="col-sm-12 col-md-12">
+                        <a href="/events/add-form" class="btn btn-block btn-dark add-product-btn">
+                            Add new event
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </th:block>
         <br/><br/>
 
         <div>

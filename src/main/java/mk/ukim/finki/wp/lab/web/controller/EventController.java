@@ -8,6 +8,7 @@ import mk.ukim.finki.wp.lab.service.CategoryService;
 import mk.ukim.finki.wp.lab.service.EventBookingService;
 import mk.ukim.finki.wp.lab.service.EventService;
 import mk.ukim.finki.wp.lab.service.LocationService;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -53,6 +54,7 @@ public class EventController {
     }
 
     @GetMapping("/by-location")
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     public String getEventsByLocation(@RequestParam Long searchLocation, Model model) {
         List<Event> events = eventService.findAllByLocation_Id(searchLocation);
 
@@ -66,12 +68,14 @@ public class EventController {
     }
 
     @GetMapping("/delete/{id}")
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     public String deleteEvent(@PathVariable Long id) {
         this.eventService.deleteEventById(id);
         return "redirect:/events";
     }
 
     @GetMapping("/edit-form/{id}")
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     public String getEDitEventForm(@PathVariable Long id, Model model) {
         if (this.eventService.findEventById(id).isPresent()) {
             Event event = this.eventService.findEventById(id).get();
@@ -87,6 +91,7 @@ public class EventController {
 
 
     @GetMapping("/add-form")
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     public String getAddEventPage(Model model) {
         List<Category> categories = this.categoryService.listAll();
         List<Location> locations = this.locationService.findAll();
@@ -96,6 +101,7 @@ public class EventController {
     }
 
     @PostMapping("/add")
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     public String save(@RequestParam(required = false) Long id,
                        @RequestParam String name,
                        @RequestParam String description,
@@ -104,16 +110,15 @@ public class EventController {
                        @RequestParam Long location) {
 
         if (id != null) {
-            // Edit the event
             this.eventService.saveEvent(id, name, description, popularityScore, category, location);
         } else {
-            // Add a new event (id is automatically generated)
             this.eventService.saveEvent(null, name, description, popularityScore, category, location);
         }
         return "redirect:/events";
     }
 
     @PostMapping("/bookEvent")
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     public String bookEvent(@RequestParam String attendeeName,
                             @RequestParam String eventName,
                             @RequestParam Long numberOfTickets, HttpServletRequest req) {
